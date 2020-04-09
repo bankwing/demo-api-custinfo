@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: demo-api-custinfo
+  name: demo-api-custinfo
+  namespace: default
+spec:
+  ports:
+  - name: "8080"
+    nodePort: 31001
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: demo-api-custinfo
+  type: NodePort

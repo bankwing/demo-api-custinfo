@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: demo-api-custinfo
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: demo-api-custinfo
+    spec:
+      containers:
+      - image:  mycluster.icp:8500/default/custinfo:0.0.1-SNAPSHOT
+        imagePullPolicy: Always
+        name: demo-api-custinfo
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        env: 
+        - name: BUILD
+          value: ${BUILD_NUMBER}
+      imagePullSecrets:
+      - name: adminregkey
+      restartPolicy: Always
