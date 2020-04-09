@@ -1,6 +1,6 @@
 FROM openjdk:8-jre-alpine
-ARG JARFILE=app.jar
-ENV JARFILEENV=/$JARFILE
+ARG JAR_FILE=app.jar
+ENV JARFILEENV=/$JAR_FILE
 VOLUME /tmp
 ADD target/$JARFILE /$JARFILE
 
