@@ -2,15 +2,23 @@ steps:
 - name: maven:3-jdk-8
   entrypoint: mvn
   args: ["test"]
+
 - name: maven:3-jdk-8
   entrypoint: mvn
   args: ["package", "-Dmaven.test.skip=true"]
+  id: artifact-build
+
 - name: gcr.io/cloud-builders/docker
   args: ["build", "-t", "gcr.io/$PROJECT_ID/demo-api-custinfo", "--build-arg=JAR_FILE=demo-api-custinfo-0.0.1-SNAPSHOT.jar", "."]
+  id: image-build
+  waitFor: ['artifact-build']
 
 # Push the container image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/demo-api-custinfo']
+  id: image-push
+  waitFor: ['image-build']
+
 - name: gcr.io/cloud-builders/gke-deploy
   args:
   - run
@@ -18,5 +26,7 @@ steps:
   - --image=gcr.io/$PROJECT_ID/demo-api-custinfo
   - --location=asia-southeast1-a
   - --cluster=cluster-1
+  waitFor: ['image-push']
+
 images:
 - gcr.io/$PROJECT_ID/demo-api-custinfo
