@@ -1,25 +1,42 @@
-apiVersion: extensions/v1beta1
-kind: Deployment
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
 metadata:
-  name: demo-api-custinfo
-  namespace: default
+  name: "api-custinfo-1"
+  namespace: "default"
+  labels:
+    app: "api-custinfo-1"
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: "api-custinfo-1"
   template:
     metadata:
       labels:
-        app: demo-api-custinfo
+        app: "api-custinfo-1"
     spec:
       containers:
-      - image:  mycluster.icp:8500/default/custinfo:0.0.1-SNAPSHOT
-        imagePullPolicy: Always
-        name: demo-api-custinfo
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-        env: 
-        - name: BUILD
-          value: ${BUILD_NUMBER}
-      imagePullSecrets:
-      - name: adminregkey
-      restartPolicy: Always
+      - name: "demo-api-custinfo-sha256-1"
+        image: "gcr.io/marine-lane-273704/demo-api-custinfo@sha256:1659673985709f3fd6913403317fe502eb7936e5a6874aa2d3c2f01eb559f20f"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "api-custinfo-1-hpa-g7bq"
+  namespace: "default"
+  labels:
+    app: "api-custinfo-1"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "api-custinfo-1"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80
+
