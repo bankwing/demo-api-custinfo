@@ -1,17 +1,16 @@
 steps:
-  - name: maven:3-jdk-8
-    entrypoint: mvn
-    args: ["test"]
-  - name: maven:3-jdk-8
-    entrypoint: mvn
-    args: ["package", "-Dmaven.test.skip=true"]
-  - name: gcr.io/cloud-builders/docker
-    args: ["build", "-t", "gcr.io/$PROJECT_ID/demo-api-custinfo", "--build-arg=JAR_FILE=target/demo-api-custinfo-0.0.1-SNAPSHOT.jar", "."]
-  - name: gcr.io/cloud-builders/gke-deploy
-     args:
-     - run
-     - --filename=deploy/deployment.yaml
-     - --image=gcr.io/$PROJECT_ID/demo-api-custinfo
-     - --location=asia-southeast1-a
-     - --cluster=cluster-1
-images: ["gcr.io/$PROJECT_ID/demo-api-custinfo"]
+- name: maven:3-jdk-8
+  entrypoint: mvn
+  args: ["test"]
+- name: maven:3-jdk-8
+  entrypoint: mvn
+  args: ["package", "-Dmaven.test.skip=true"]
+- name: gcr.io/cloud-builders/docker
+  args: ["build", "-t", "gcr.io/$PROJECT_ID/demo-api-custinfo", "--build-arg=JAR_FILE=target/demo-api-custinfo-0.0.1-SNAPSHOT.jar", "."]
+- name: gcr.io/cloud-builders/gke-deploy
+   args:
+   - run
+   - --filename=deploy/deployment.yaml
+   - --image=gcr.io/$PROJECT_ID/demo-api-custinfo
+   - --location=asia-southeast1-a
+   - --cluster=cluster-1
